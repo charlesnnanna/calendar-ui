@@ -67,19 +67,20 @@ function classNames(...classes) {
 export default function Calendar() {
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
-  let [date, setDate] = useState("")
+  let [date, setDate] = useState('2022-12-30')
   let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
   let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  
 
 
   useEffect(() => {
-      console.log(date.toString())
+      console.log(today)
+      //console.log(date.toString())
       const parsedDateObject = parseISO(date)
-      console.log(parsedDateObject)
+      //console.log(parsedDateObject)
       const parsedDate = parse(date.toString(), "MMM-yyyy", new Date())
-      console.log(parsedDate)
+      //console.log(parsedDate)
       setSelectedDay(parsedDateObject)
-      
   }, [date])
 
 
@@ -141,7 +142,7 @@ export default function Calendar() {
               <button
                 className= "border border-black"
                 type = "button"
-                onClick = ""
+                
               >
                 Locate date
               </button>
