@@ -67,35 +67,57 @@ function classNames(...classes) {
 export default function Calendar() {
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
-  let [date, setDate] = useState('2022-12-30')
-  let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
-  let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  let [defaultDate, setDefaultDate] = useState(today)
+  let [dateFromInput, setDateFromInput] = useState('2022-05')
+  let [hasSearched, sethasSearched] = useState(false)
+  let [displayedDate, setDisplayedDate] = useState(today)
+  let [activeDate, setActiveDate] = useState(typeof dateFromInput === 'object' ? dateFromInput : defaultDate)
+  let formatCurrentDate = (date) => {
+    return format(date, 'MMM-yyyy')
+  }
+  let [currentMonth, setCurrentMonth]  = useState(format(activeDate, 'MMM-yyyy'))
+  let activeDateObject = parse(currentMonth, 'MMM-yyyy', new Date())
+  //let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  
   
 
 
   useEffect(() => {
-      console.log(today)
-      //console.log(date.toString())
-      const parsedDateObject = parseISO(date)
+      
+      let parsedDate = parseISO(dateFromInput)  
+      console.log(parsedDate)
+
+      if (typeof dateFromInput == 'object'){
+        
+        setActiveDate(parsedDate)
+        setCurrentMonth(format(parsedDate, 'MMM-yyyy'))
+        setSelectedDay(parsedDate)
+      }
+      //setActiveDate(parseISO(activeDate)) 
+      //const formattedDate = format(parseISO(activeDate), 'MMM-yyyy')
+      //const dateObject = parse(formattedDate, 'MMM-yyyy', new Date())
+  
+      
+      
       //console.log(parsedDateObject)
-      const parsedDate = parse(date.toString(), "MMM-yyyy", new Date())
+      //const parsedDate = parse(date.toString(), "MMM-yyyy", new Date())
       //console.log(parsedDate)
-      setSelectedDay(parsedDateObject)
-  }, [date])
+      
+  }, [dateFromInput])
 
 
   let days = eachDayOfInterval({
-    start: firstDayCurrentMonth,
-    end: endOfMonth(firstDayCurrentMonth),
+    start: activeDateObject,
+    end: endOfMonth(activeDateObject),
   })
 
   function previousMonth() {
-    let firstDayNextMonth = add(firstDayCurrentMonth, { months: -1 })
+    let firstDayNextMonth = add(activeDateObject, { months: -1 })
     setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
   }
 
   function nextMonth() {
-    let firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 })
+    let firstDayNextMonth = add(activeDateObject, { months: 1 })
     setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
   }
 
@@ -104,7 +126,7 @@ export default function Calendar() {
   )
 
   function updateDate (e){
-    setDate(e.target.value)
+    setDateFromInput(e.target.value)
     
   }
 
@@ -151,7 +173,7 @@ export default function Calendar() {
             <div className="flex items-center">
 
               <h2 className="flex-auto font-semibold text-gray-900">
-                {format(firstDayCurrentMonth, 'MMMM yyyy')}
+                {format(activeDateObject, 'MMMM yyyy')}
               </h2>
 
               <button
@@ -201,11 +223,11 @@ export default function Calendar() {
                         'text-red-500',
                       !isEqual(day, selectedDay) &&
                         !isToday(day) &&
-                        isSameMonth(day, firstDayCurrentMonth) &&
+                        isSameMonth(day, activeDateObject) &&
                         'text-gray-900',
                       !isEqual(day, selectedDay) &&
                         !isToday(day) &&
-                        !isSameMonth(day, firstDayCurrentMonth) &&
+                        !isSameMonth(day, activeDateObject) &&
                         'text-gray-400',
                       isEqual(day, selectedDay) && isToday(day) && 'bg-red-500',
                       isEqual(day, selectedDay) &&
