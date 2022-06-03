@@ -65,18 +65,24 @@ function classNames(...classes) {
 }
 
 export default function Calendar() {
+  
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
   let [defaultDate, setDefaultDate] = useState(today)
-  let [dateFromInput, setDateFromInput] = useState('2022-05')
+  let [dateFromInput, setDateFromInput] = useState(() => {
+    let now = new Date();
+    let day = ("0" + now.getDate()).slice(-2)
+    let month = ("0" + (now.getMonth() + 1)).slice(-2)
+    let today = now.getFullYear() + "-" + month + "-" + day
+    console.log(today)
+    return today
+  })
   let [hasSearched, sethasSearched] = useState(false)
   let [displayedDate, setDisplayedDate] = useState(today)
   let [activeDate, setActiveDate] = useState(typeof dateFromInput === 'object' ? dateFromInput : defaultDate)
-  let formatCurrentDate = (date) => {
-    return format(date, 'MMM-yyyy')
-  }
   let [currentMonth, setCurrentMonth]  = useState(format(activeDate, 'MMM-yyyy'))
   let activeDateObject = parse(currentMonth, 'MMM-yyyy', new Date())
+  console.log(typeof activeDate)
   //let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
   
   
@@ -87,12 +93,12 @@ export default function Calendar() {
       let parsedDate = parseISO(dateFromInput)  
       console.log(parsedDate)
 
-      if (typeof dateFromInput == 'object'){
+    
         
         setActiveDate(parsedDate)
         setCurrentMonth(format(parsedDate, 'MMM-yyyy'))
         setSelectedDay(parsedDate)
-      }
+      
       //setActiveDate(parseISO(activeDate)) 
       //const formattedDate = format(parseISO(activeDate), 'MMM-yyyy')
       //const dateObject = parse(formattedDate, 'MMM-yyyy', new Date())
