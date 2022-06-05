@@ -16,6 +16,7 @@ import {
   startOfToday,
 } from 'date-fns'
 import { Fragment, useEffect, useState } from 'react'
+import DateDropdown from './DateDropdown'
 
 const meetings = [
   {
@@ -68,54 +69,128 @@ export default function Calendar() {
   
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
-  let [defaultDate, setDefaultDate] = useState(today)
-  let [dateFromInput, setDateFromInput] = useState(() => {
+  let [month , setMonth] = useState(() => {
     let now = new Date();
     let day = ("0" + now.getDate()).slice(-2)
     let month = ("0" + (now.getMonth() + 1)).slice(-2)
-    let today = now.getFullYear() + "-" + month + "-" + day
-    console.log(today)
+    let today = month + "-" + day
     return today
   })
-  let [hasSearched, sethasSearched] = useState(false)
-  let [displayedDate, setDisplayedDate] = useState(today)
-  let [activeDate, setActiveDate] = useState(typeof dateFromInput === 'object' ? dateFromInput : defaultDate)
+
+  let [year, setYear] = useState(() => {
+    let now = new Date();
+    let year = now.getFullYear();
+    return year
+  })
+
+  let [activeDate, setActiveDate] = useState(today)
   let [currentMonth, setCurrentMonth]  = useState(format(activeDate, 'MMM-yyyy'))
   let activeDateObject = parse(currentMonth, 'MMM-yyyy', new Date())
-  console.log(typeof activeDate)
-  //let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
   
-  
-
-
   useEffect(() => {
       
-      let parsedDate = parseISO(dateFromInput)  
-      console.log(parsedDate)
-
-    
-        
+        let parsedDate = parseISO(year + '-' + month)  
+        console.log(parsedDate)
         setActiveDate(parsedDate)
         setCurrentMonth(format(parsedDate, 'MMM-yyyy'))
         setSelectedDay(parsedDate)
-      
-      //setActiveDate(parseISO(activeDate)) 
-      //const formattedDate = format(parseISO(activeDate), 'MMM-yyyy')
-      //const dateObject = parse(formattedDate, 'MMM-yyyy', new Date())
-  
-      
-      
-      //console.log(parsedDateObject)
-      //const parsedDate = parse(date.toString(), "MMM-yyyy", new Date())
-      //console.log(parsedDate)
-      
-  }, [dateFromInput])
+  },[month, year])
 
 
   let days = eachDayOfInterval({
     start: activeDateObject,
     end: endOfMonth(activeDateObject),
   })
+
+  const getListOfYears = () => {
+    const arr = []
+
+    for (let i = 0; i <= 2022; i++){
+      let stringCounter = i.toString()
+      if (stringCounter.length === 3){ 
+        arr.push("0" + stringCounter);
+      }
+
+      if(stringCounter.length === 2){
+        arr.push("00" + stringCounter);
+      }
+
+      if(stringCounter.length === 1){
+        arr.push("000" + stringCounter);
+      }
+
+      if(stringCounter.length === 4){
+        arr.push(stringCounter);
+      }
+    }
+    return arr.reverse();
+  }
+
+  const years = getListOfYears()
+  console.log(years)
+
+  const months = [
+    {
+      name : "January",
+      number : "01"
+    },
+
+    {
+      name : "February",
+      number : "02"
+    },
+
+    {
+      name : "March",
+      number : "03"
+    },
+
+    {
+      name : "April",
+      number : "04"
+    },
+
+    {
+      name : "May",
+      number : "05"
+    },
+
+    {
+      name : "June",
+      number : "06"
+    },
+
+    {
+      name : "July",
+      number : "07"
+    },
+
+    {
+      name : "Auguast",
+      number : "08"
+    },
+
+    {
+      name : "September",
+      number : "09"
+    },
+
+    {
+      name : "October",
+      number : "10"
+    },
+
+    {
+      name : "November",
+      number : "11"
+    },
+
+    {
+      name : "December",
+      number : "12"
+    }
+
+  ]
 
   function previousMonth() {
     let firstDayNextMonth = add(activeDateObject, { months: -1 })
@@ -131,14 +206,14 @@ export default function Calendar() {
     isSameDay(parseISO(meeting.startDatetime), selectedDay)
   )
 
-  function updateDate (e){
-    setDateFromInput(e.target.value)
-    
+  function updateMonth (e) {
+    setMonth(e.target.value)
   }
 
-  function findDate(date){
-    setSelectedDay(date)
-  }
+  function updateYear (e) {
+    setYear(e.target.value)
+}
+
 
   return (
     <div className="pt-16">
@@ -156,24 +231,33 @@ export default function Calendar() {
               //Uses flex 
             }
 
-            <div className='flex flex-row justify-between border border-black mb-3'>
-              <div className='border border-black'>
-                  <input 
-                  type="date" 
-                  placeholder = "Search Date..."
-                  name = "date" 
-                  id = "date"
-                  max="9999-12-31"
-                  onChange={updateDate}
-                  />
+            <div className='flex flex-row justify-between mb-3'>
+              
+              <div>
+                 <label className='font-medium' htmlFor = "years">Year</label>
+                 <select name="years"
+                  className='border border-black p-2 ml-2'
+                  onChange={updateYear}
+                 >
+                    {years.map(function (year, index) {
+                        return (<option value = {year} key = {index}>{year}</option>)
+                    }) }
+                </select>
               </div>
-              <button
-                className= "border border-black"
-                type = "button"
-                
-              >
-                Locate date
-              </button>
+
+              <div>
+                <label className='font-medium' htmlFor = "month">Month</label>
+                 <select name="years"
+                  className='border border-black p-2 ml-2'
+                  onChange={updateMonth}
+                  >
+                    {months.map(function (month, index) {
+                        return (<option value = {month.number} key = {index}>{month.name}</option>)
+                    }) }
+                </select>
+              </div>
+
+              
             </div>
 
             <div className="flex items-center">
